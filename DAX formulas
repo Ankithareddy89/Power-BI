@@ -1,0 +1,60 @@
+Aggregation Measures 
+// 1. Unique Products Sold
+Unique Products = DISTINCTCOUNT(Sales[ProductID])
+
+// 2. Unique Customers
+Unique Customers = DISTINCTCOUNT(Sales[CustID])
+
+// 3. Maximum Sale Amount
+Max Sale = 
+MAXX(
+    Sales, Sales [Quantity] * RELATED (Product [Unit Price])
+   )
+
+// 4. Minimum Sale Amount
+Min Sale = 
+MINX (
+    Sales, Sales [Quantity] * RELATED (Product[Unit Price])
+)
+// 5. Average Sale per Customer
+Avg Sale per Customer = DIVIDE ([Total Sales], [Unique Customers], 0)
+
+// 6. Revenue per Product
+Revenue per Product = DIVIDE ([Total Sales], [Unique Products], 0)
+ 
+Introduction to CALCULATE 
+// 1. Sales for Electronics Category
+Electronics Sales = CALCULATE([Total Sales],     Product[Category] = "Electronics" )
+// 2. Sales in USA
+USA Sales = CALCULATE(     [Total Sales],      Customer[Country] = "USA" )
+// 3. Sales with Discount
+Discounted Sales = CALCULATE(      [Total Sales],      Sales[Discount] > 0  )
+// 4. Sales without Discount
+Non-Discounted Sales = CALCULATE(     [Total Sales],     Sales[Discount] = 0  )
+// 5. High Value Transactions (Quantity > 10)
+High Volume Sales = CALCULATE(     [Total Sales],     Sales[Quantity] > 10  )
+
+Conditional Aggregations 
+// 1. Sales for Top Categories (Multiple Conditions)
+Top Category Sales = CALCULATE(    [Total Sales],     Product[Category] IN {"Electronics", "Furniture", "Clothing"})
+// 2. Premium Sales (High Quantity AND High Price)
+Premium Sales = CALCULATE([Total Sales],    Sales[Quantity] >= 5,     Product[UnitPrice] >= 100 )
+// 3. Discount Impact
+Total Discount Amount = 
+SUMX(     Sales,     Sales[Quantity] * RELATED(Product[UnitPrice]) * Sales[Discount] )
+// 4. Revenue After Discount
+Net Sales = [Total Sales] - [Total Discount Amount]
+// 5. Discount Percentage
+Discount % = DIVIDE([Total Discount Amount], [Total Sales], 0)
+
+Time Intelligence
+// 1. Sales Year-to-Date
+Sales YTD = TOTALYTD(     [Total Sales],     Calendar[Date]  )
+// 2. Sales Quarter-to-Date
+Sales QTD =  TOTALQTD(     [Total Sales],     Calendar[Date]  )
+// 3. Sales Month-to-Date
+Sales MTD =  TOTALMTD( [Total Sales],     Calendar[Date]  )
+// 4. Quantity YTD
+Quantity YTD = TOTALYTD(     [Total Quantity],     Calendar[Date]  )
+// 5. Transaction Count YTD
+Transactions YTD = TOTALYTD(     [Transaction Count],     Calendar[Date] )
